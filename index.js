@@ -12,6 +12,9 @@ app.use(morgan(process.env.NODE_ENV === 'production' ? 'common' : 'dev', {
 }));
 app.use(cors({origin: CLIENT_ORIGIN}));
 
+// test code to see if the client can connect to the server
+app.get('/test', (req, res) => res.json('success'));
+
 function runServer(port = PORT) {
   const server = app.listen(port, () => console.info(`App listining on port ${server.address().port}`))
     .on('error', err => {
