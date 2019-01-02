@@ -6,6 +6,7 @@ const cors = require('cors');
 const morgan = require('morgan');
 const {PORT, CLIENT_ORIGIN} = require('./config');
 const {dbConnect} = require('./db-mongoose');
+const {router: usersRouter} = require('./users');
 
 const app = express();
 
@@ -14,8 +15,7 @@ app.use(morgan(process.env.NODE_ENV === 'production' ? 'common' : 'dev', {
 }));
 app.use(cors({origin: CLIENT_ORIGIN}));
 
-// test code to see if the client can connect to the server
-app.get('/test', (req, res) => res.json('success'));
+app.use('/api/users', usersRouter);
 
 function runServer(port = PORT) {
   const server = app.listen(port, () => console.info(`App listining on port ${server.address().port}`))
