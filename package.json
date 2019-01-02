@@ -1,6 +1,6 @@
 {
   "name": "server",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
     "start": "nodemon index.js",
     "mocha": "mocha --exit --file test/setup.test.js '!(node_modules)/**/*test.js'",
@@ -15,8 +15,12 @@
     "cors": "^2.8.4",
     "dotenv": "^6.2.0",
     "express": "^4.16.3",
+    "jsonwebtoken": "^8.4.0",
     "mongoose": "^5.2.6",
-    "morgan": "^1.9.0"
+    "morgan": "^1.9.0",
+    "passport": "^0.4.0",
+    "passport-jwt": "^4.0.0",
+    "passport-local": "^1.0.0"
   },
   "devDependencies": {
     "chai": "^4.1.2",
