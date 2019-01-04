@@ -5,6 +5,8 @@ const schema = new mongoose.Schema({
   title: {type: String, required: true},
   ingredients: [{ingredient: String, quantity: Number}],
   instructions: String,
+  publicDoc: {type: Boolean, default: true},
+  edited: {type: Boolean, default: false},
   userId: {type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true}
 });
 

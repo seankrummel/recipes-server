@@ -9,6 +9,7 @@ const {PORT, CLIENT_ORIGIN} = require('./config');
 const {dbConnect} = require('./db-mongoose');
 const {router: usersRouter} = require('./users');
 const {router: authRouter, localStrategy, jwtStrategy} = require('./auth');
+const {router: recipesRouter} = require('./recipes');
 
 const app = express();
 
@@ -22,6 +23,7 @@ passport.use(jwtStrategy);
 
 app.use('/api/users', usersRouter);
 app.use('/api/auth', authRouter);
+app.use('/api/recipes', recipesRouter);
 
 function runServer(port = PORT) {
   const server = app.listen(port, () => console.info(`App listining on port ${server.address().port}`))
