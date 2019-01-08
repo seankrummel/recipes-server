@@ -8,7 +8,7 @@ const schema = new mongoose.Schema({
   recipeDeletedAlert: {type: Boolean, default: false}
 });
 
-schema.index({title: 1, userId: 1}, {unique: true});
+// schema.index({title: 1, userId: 1}, {unique: true});
 
 schema.set('timestamps', true);
 schema.set('toJSON', {

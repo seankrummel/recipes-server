@@ -34,14 +34,15 @@ router.get('/:id', (req, res, next) => {
 });
 // crete new recipe
 router.post('/', (req, res, next) => {
-  const {title, ingredients, instructions, publicDoc} = req.body;
+  console.log(req.body);
+  const {title, instructions, publicDoc} = req.body;
+  let ingredients = req.body.ingredients; // not a constant, might be changing below w/ ingredients.map
   const userId = req.user.id;
   if (!title) {
     const err = new Error('Missing `title` in request body');
     err.status = 400;
     return next(err);
   }
-  let ingredientsList;
   if (ingredients) {
     if (!Array.isArray(ingredients)) {
       const err = new Error('The `ingredients` field must be an array');
@@ -49,20 +50,20 @@ router.post('/', (req, res, next) => {
       return next(err);
     }
     let broken = false;
-    ingredientsList = ingredients.map(ingredient => {
+    ingredients = ingredients.map(ingredient => {
       if (!ingredient.ingredient || !ingredient.quantity) {
         const err = new Error('Each element of `ingredients` must contain ingredient and quantity properties');
         err.status = 400;
         next(err); // if I return next(err) here, then it'll just be pushed onto ingredientsList
         broken = true;
       }
-      return {ingredient: ingredient.ingredient, quantity: ingredient.quantity};
+      else return {ingredient: ingredient.ingredient, quantity: ingredient.quantity};
       // this makes sure that we have ingredient and quantity and no additional keys
     });
     if (broken) return;
   }
 
-  const newRecipe = {title, ingredients: ingredientsList, instructions, publicDoc, userId};
+  const newRecipe = {title, ingredients, instructions, publicDoc, userId};
   Recipe.create(newRecipe)
     .then(result => res.location(`${req.originalUrl}/${result.id}`).status(201).json(result))
     .catch(err => next(err));
@@ -100,7 +101,7 @@ router.put('/:id', (req, res, next) => {
         next(err);
         broken = true;
       }
-      return {ingredient: ingredient.ingredient, quantity: ingredient.quantity};
+      else return {ingredient: ingredient.ingredient, quantity: ingredient.quantity};
     });
     if (broken) return;
   }
@@ -113,7 +114,7 @@ router.put('/:id', (req, res, next) => {
 });
 // delete recipe
 router.delete('/:id', (req, res, next) => {
-  const {id} = req.params.id;
+  const id = req.params.id;
   const userId = req.user.id;
   if (!mongoose.Types.ObjectId.isValid(id)) {
     const err = new Error('The `id` is not valid');
@@ -125,8 +126,8 @@ router.delete('/:id', (req, res, next) => {
   // it shouldn't be necessary to alert user if they delete their own recipe
   RecipeList.updateMany({recipes: id, userId: {$not: userId}}, {$pull: {recipes: id}, recipeDeletedAlert: true})
     .RecipeList.updateMany({recipes: id, userId}, {$pull: {recipes: id}})
-    .then(Recipe.findByIdAndRemove({_id: id, userId}))
-    .then(res => res.sentStatus(204))
+    .then(Recipe.findOneAndRemove({_id: id, userId}))
+    .then(() => res.sentStatus(204))
     .catch(err => next(err));
 });
 
