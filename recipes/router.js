@@ -4,7 +4,7 @@ const router = express.Router();
 const mongoose = require('mongoose');
 const passport = require('passport');
 const {Recipe} = require('./models');
-const {RecipeList} = require('../recipeLists');
+const {RecipeList} = require('../recipeLists/models');
 
 router.use('/', passport.authenticate('jwt', {session: false, failWithError: true}));
 
@@ -124,10 +124,11 @@ router.delete('/:id', (req, res, next) => {
 
   // remove recipe from recipeLists before deleting the recipe. let user know a recipe on their list has been deleted.
   // it shouldn't be necessary to alert user if they delete their own recipe
-  RecipeList.updateMany({recipes: id, userId: {$not: userId}}, {$pull: {recipes: id}, recipeDeletedAlert: true})
-    .RecipeList.updateMany({recipes: id, userId}, {$pull: {recipes: id}})
-    .then(Recipe.findOneAndRemove({_id: id, userId}))
-    .then(() => res.sentStatus(204))
+  // RecipeList.updateMany({recipes: id, userId: {$not: userId}}, {$pull: {recipes: id}, recipeDeletedAlert: true})
+  //   .then(() => RecipeList.updateMany({recipes: id, userId}, {$pull: {recipes: id}}))
+  RecipeList.updateMany({recipes: id}, {$pull: {recipes: id}})
+    .then(() => Recipe.findOneAndRemove({_id: id, userId}))
+    .then(() => res.sendStatus(204))
     .catch(err => next(err));
 });
 
