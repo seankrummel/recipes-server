@@ -4,7 +4,7 @@ const router = express.Router();
 const mongoose = require('mongoose');
 const passport = require('passport');
 const {RecipeList} = require('./models');
-const {Recipe} = require('../recipes');
+const {Recipe} = require('../recipes/models');
 
 router.use('/', passport.authenticate('jwt', {session: false, failWithError: true}));
 
